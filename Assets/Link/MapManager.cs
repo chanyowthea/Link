@@ -6,8 +6,8 @@ using UnityStandardAssets.CrossPlatformInput;
 public class MapManager : MonoBehaviour
 {
 	public static MapManager _Instance; 
-	[SerializeField] SpriteRenderer _itemPrefab;
-	[SerializeField] List<Sprite> _items = new List<Sprite>();
+	[SerializeField] Block _itemPrefab;
+	[SerializeField] List<Sprite> _sprites = new List<Sprite>();
 	[SerializeField] int _width = 3;
 	[SerializeField] int _height = 3;
 
@@ -27,11 +27,15 @@ public class MapManager : MonoBehaviour
 	{
 		for (int i = 0, count = _width * _height; i < count; ++i)
 		{
-			SpriteRenderer sprite = GameObject.Instantiate(_itemPrefab); 
-			sprite.transform.position = new Vector3(i % _width - _width / 2f + 0.5f, i / _width - _height / 2f + 0.5f, 0); 
-			sprite.sprite = _items[_random.Next(0, _items.Count)]; 
-			sprite.name = i.ToString(); 
-			sprite.GetComponent<Block>()._coordinateText.text = sprite.transform.position.x + ", " + sprite.transform.position.y; 
+			Block block = GameObject.Instantiate(_itemPrefab); 
+			block._id = i; 
+			block._pos = new Vector2(i % _width, i / _width); 
+			block.transform.position = new Vector3(i % _width - _width / 2f + 0.5f, i / _width - _height / 2f + 0.5f, 0); 
+			int index = _random.Next(0, _sprites.Count); 
+			block._spriteIndex = index; 
+			block._item.sprite = _sprites[index]; 
+			block.name = "Item " + i.ToString(); 
+			block._coordinateText.text = block.transform.position.x + ", " + block.transform.position.y; 
 		}
 	}
 
@@ -48,7 +52,7 @@ public class MapManager : MonoBehaviour
 			Collider2D collider = Physics2D.OverlapPoint(pos, LayerMask.GetMask("Block")); 
 			if (collider != null)
 			{
-				StartCoroutine(HideRoutine(collider.GetComponent<Block>()._mask)); 
+				StartCoroutine(HideRoutine(collider.GetComponent<Block>()._mask.gameObject)); 
 				Sprite sprite = collider.GetComponent<SpriteRenderer>().sprite; 
 				if (_lastSelectedSprite == null)
 				{
