@@ -11,4 +11,5 @@ public class Block : MonoBehaviour
 	[NonSerialized] public int _spriteIndex;  
 	[NonSerialized] public int _id; 
 	[NonSerialized] public Vector2 _pos; 
+
 }
